@@ -11,7 +11,7 @@ const renderItems = () => {
   items.forEach((item, index) => {
     const li = document.createElement('li');
     li.className = 'list-group-item';
-    li.innerHTML = `${item.name} (${item.description}) <button class="btn btn-danger btn-sm float-right delete">X</button>`;
+    li.innerHTML = `${item.name} (${item.description}) <button class="btn btn-danger btn-sm float-right delete">Delete</button>`;
 
     li.querySelector('.delete').addEventListener('click', (e) => {
       items.splice(index, 1);
