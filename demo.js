@@ -1,50 +1,100 @@
-// var listItems = document.querySelectorAll("#items .list-group-item");
+var form = document.getElementById('addForm');
+var itemList = document.getElementById('items');
+var filter = document.getElementById('filter');
 
+// Form submit event
+form.addEventListener('submit', addItem);
+// Delete event
+itemList.addEventListener('click', removeItem);
+// Filter event
+filter.addEventListener('keyup', filterItems);
 
-//listItems[2].style.backgroundColor = "green";
+// Add item
+function addItem(e){
+  e.preventDefault();
 
-//for (var i = 0; i < listItems.length; i++) {
- // listItems[i].style.fontWeight = "bold";
-//}
+  // Get input value
+  var newItem = document.getElementById('item').value;
 
-//var headerTitle = document.getElementById("header-title");
-//headerTitle.style.border = "solid 1px black";
+  // Create new li element
+  var li = document.createElement('li');
+  // Add class
+  li.className = 'list-group-item';
+  // Add text node with input value
+  li.appendChild(document.createTextNode(newItem));
 
-//var addItemTitle = document.querySelector(".title");
-//addItemTitle.style.fontWeight = "bold";
-//addItemTitle.style.color = "green";
+  // Create del button element
+  var deleteBtn = document.createElement('button');
 
-//var items = document.getElementsByClassName("list-group-item");
+  // Add classes to del button
+  deleteBtn.className = 'btn btn-danger btn-sm float-right delete';
 
-// Change the background color of the 2nd item to green
-//items[1].style.backgroundColor = "green";
+  // Append text node
+  deleteBtn.appendChild(document.createTextNode('X'));
 
-// Make the 3rd item invisvible
-//items[2].style.display = "none";
-// Change the font color to green for 2nd item in the item list
-//document.querySelectorAll(".list-group-item")[1].style.color = "green";
+  // Append button to li
+  li.appendChild(deleteBtn);
 
-// Choose all the odd elements and make their background green
-//var oddElements = document.querySelectorAll(".list-group-item:nth-child(odd)");
-//for (var i = 0; i < oddElements.length; i++) {
-  //oddElements[i].style.backgroundColor = "green";
-//}
-//var itemList = document.querySelector('#items');
-//console.log(itemList.parentElement);
+  // Append li to list
+  itemList.appendChild(li);
+}
 
-var itemList = document.querySelector('#items');
-console.log(itemList.lastChild)
-itemList.firstElementChild.textContent = 'Hello world'
+// Remove item
+function removeItem(e){
+  if(e.target.classList.contains('delete')){
+    if(confirm('Are You Sure?')){
+      var li = e.target.parentElement;
+      itemList.removeChild(li);
+    }
+  }
+}
 
+// Filter Items
+function filterItems(e){
+  // convert text to lowercase
+  var text = e.target.value.toLowerCase();
+  // Get lis
+  var items = itemList.getElementsByTagName('li');
+  // Convert to an array
+  Array.from(items).forEach(function(item){
+    var itemName = item.firstChild.textContent;
+    if(itemName.toLowerCase().indexOf(text) != -1){
+      item.style.display = 'block';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
 
-//create element
-//create div
-var newdiv = document.createElement('div');
-newdiv.className = 'helo';
-newdiv.setAttribute ('title','helo world');
-var newdivText = document.createTextNode('Hello world');
-newdiv.appendChild(newdivText);
-var container = document.querySelector(Headers .container)
-var h1 = document.querySelector(Headers .h1)
-console.log(newdiv);
-container.insertBefore(newdiv, h1);
+const filter = document.querySelector("#filter");
+      const itemsList = document.querySelector("#items");
+      const addForm = document.querySelector("#addForm");
+
+      filter.addEventListener("input", function() {
+        const searchString = filter.value.toLowerCase();
+        const items = itemsList.querySelectorAll("li");
+
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          const itemName = item.querySelector(".item-name").textContent.toLowerCase();
+          const itemDesc = item.querySelector(".item-desc").textContent.toLowerCase();
+          if (itemName.includes(searchString) || itemDesc.includes(searchString)) {
+            item.style.display = "block";
+          } else {
+            item.style.display = "none";
+          }
+        }
+      });
+
+      addForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const itemName = addForm.querySelector("#item-name").value;
+        const itemDesc = addForm.querySelector("#item-desc").value;
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <span class="item-name">${itemName}</span>
+          <p class="item-desc">${itemDesc}</p>
+          <button class="btn btn-danger btn-sm float-right delete">X</button>
+        `;
+        itemsList.appendChild(li);
+      });
