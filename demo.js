@@ -1,73 +1,37 @@
-// Get form element
-const form = document.getElementById('addForm');
+// get the form and items list
+const addForm = document.querySelector('#addForm');
+const itemsList = document.querySelector('#items');
 
-// Add submit event listener to form
-form.addEventListener('submit', function(e) {
-  // Prevent default form submit behavior
-  e.preventDefault();
+// load existing items from local storage
+let items = JSON.parse(localStorage.getItem('items')) || [];
 
-  // Get input elements
-  const item = document.getElementById('item');
-  const description = document.getElementById('description');
-
-  // Get items from local storage
-  let items = JSON.parse(localStorage.getItem('items')) || [];
-
-  // Create object to store item and description
-  const itemData = {
-    name: item.value,
-    description: description.value
-  };
-
-  // Push item data to items array
-  items.push(itemData);
-
-  // Store items array in local storage
-  localStorage.setItem('items', JSON.stringify(items));
-
-  // Clear input values
-  item.value = '';
-  description.value = '';
-
-  // Call function to display items
-  displayItems();
-});
-
-// Function to display items
-function displayItems() {
-  // Get items from local storage
-  let items = JSON.parse(localStorage.getItem('items')) || [];
-
-  // Get items list element
-  const itemsList = document.getElementById('items');
-
-  // Clear items list
+// render items to the UI
+const renderItems = () => {
   itemsList.innerHTML = '';
-
-  // Loop through items array
-  items.forEach(function(item) {
-    // Create list item element
+  items.forEach((item, index) => {
     const li = document.createElement('li');
     li.className = 'list-group-item';
+    li.innerHTML = `${item.name} (${item.description}) <button class="btn btn-danger btn-sm float-right delete">X</button>`;
 
-    // Create delete button element
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn btn-danger btn-sm float-right delete';
-    deleteBtn.innerHTML = 'X';
+    li.querySelector('.delete').addEventListener('click', (e) => {
+      items.splice(index, 1);
+      localStorage.setItem('items', JSON.stringify(items));
+      renderItems();
+    });
 
-    // Append item name and delete button to list item
-    li.innerHTML = item.name;
-    li.appendChild(deleteBtn);
-
-    // Append item description to list item
-    const desc = document.createElement('p');
-    desc.innerHTML = item.description;
-    li.appendChild(desc);
-
-    // Append list item to items list
     itemsList.appendChild(li);
   });
-}
+};
 
-// Call function to display items on page load
-displayItems();
+// add new item to the list
+addForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = addForm.querySelector('#item').value;
+  const description = addForm.querySelector('#item-description').value;
+  items.push({ name, description });
+  localStorage.setItem('items', JSON.stringify(items));
+  renderItems();
+  addForm.reset();
+});
+
+renderItems();
